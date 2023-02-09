@@ -5,9 +5,19 @@ const port = 3000;
 const sequelize = require('./db');
 
 app.get('/diaryentries', async(req, res, next) => {
-    const diaryEntries = await DiaryEntry.findAll();
-    res.send(diaryEntries);
-})
+    try{
+        const diaryEntries = await DiaryEntry.findAll();
+        if(diaryEntries){
+            res.sendStatus(200).send(diaryEntries);
+            next();
+        }else{
+            res.send("Entries not found! There must be an error somewhere.")
+        }
+    }catch(err){
+        res.send(err);
+        next(err);
+    }
+});
 
 app.listen(port, () => {
     console.log("listening on port http://localhost:${port}/diaryentries");
