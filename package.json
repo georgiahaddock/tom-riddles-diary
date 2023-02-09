@@ -19,6 +19,7 @@
   "homepage": "https://github.com/georgiahaddock/tom-riddles-diary#readme",
   "dependencies": {
     "express": "^4.18.2",
-    "sequelize": "^6.28.0"
+    "sequelize": "^6.28.0",
+    "sqlite": "^4.1.2"
   }
 }
