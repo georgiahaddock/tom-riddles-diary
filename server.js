@@ -8,3 +8,7 @@ app.get('/diaryentries', async(req, res, next) => {
     const diaryEntries = await DiaryEntry.findAll();
     res.send(diaryEntries);
 })
+
+app.listen(port, () => {
+    console.log("listening on port http://localhost:${port}/diaryentries");
+})
