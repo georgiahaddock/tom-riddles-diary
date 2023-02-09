@@ -1,0 +1,20 @@
+{
+  "name": "tom-riddles-diary",
+  "version": "1.0.0",
+  "description": "Where he may write his deepest, darkest secrets away from prying eyes - and hackers!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/georgiahaddock/tom-riddles-diary.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/georgiahaddock/tom-riddles-diary/issues"
+  },
+  "homepage": "https://github.com/georgiahaddock/tom-riddles-diary#readme"
+}
