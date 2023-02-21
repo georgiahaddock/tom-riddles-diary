@@ -2,11 +2,12 @@ const express = require('express');
 const {DiaryEntry} = require('./models/DiaryEntry.js');
 const app = express();
 const port = 3000;
-const sequelize = require('./db');
+const sequelize = require('./db/db');
 
 app.get('/diaryentries', async(req, res, next) => {
     try{
         const diaryEntries = await DiaryEntry.findAll();
+
         if(diaryEntries){
             res.sendStatus(200).send(diaryEntries);
             next();
@@ -20,5 +21,5 @@ app.get('/diaryentries', async(req, res, next) => {
 });
 
 app.listen(port, () => {
-    console.log("listening on port http://localhost:${port}/diaryentries");
+    console.log(`listening on port http://localhost:${port}/diaryentries`);
 })
