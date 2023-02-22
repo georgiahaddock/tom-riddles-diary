@@ -54,6 +54,28 @@ app.delete('/diaryentries/:id', async (req, res, next) =>{
     }
 })
 
+app.put('/diaryentries/:id', async (req, res, next) =>{
+    console.log(req.body);
+    try{
+        const diaryEntry = await DiaryEntry.findByPk(req.params.id);
+        if(!diaryEntry){
+            throw new Error('entry not found!');
+        }
+        if(req.body.title){
+            diaryEntry.title = req.body.title;
+            await diaryEntry.save();
+        }
+        if(req.body.passage){
+            diaryEntry.passage = req.body.passage;
+            await diaryEntry.save();
+        }
+        res.status(200).send("modified.")
+    }catch(err){
+        res.status(500)._construct(err.message);
+        next(err);
+    }
+})
+
 app.listen(port, () => {
     sequelize.sync({ force: false });
     console.log(`listening on port http://localhost:${port}/diaryentries`);
