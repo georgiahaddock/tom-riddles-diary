@@ -1,3 +1,4 @@
+const cors = require('cors');
 const express = require('express');
 const {DiaryEntry} = require('./models/DiaryEntry.js');
 const app = express();
