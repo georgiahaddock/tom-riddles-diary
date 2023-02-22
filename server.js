@@ -24,7 +24,6 @@ app.get('/diaryentries', async(req, res, next) => {
 
 app.post('/diaryentries', async (req, res, next) => {
     try{
-        console.log(req.body);
         let { newEntry } = req.body;
         if(!newEntry.title || !newEntry.passage){
             throw new Error('invalid request body');
@@ -34,8 +33,24 @@ app.post('/diaryentries', async (req, res, next) => {
             res.send(newEntry);
         }
     }catch(err){
-        res.send(err);
+        res.status(500).send(err.message);
         next(err)
+    }
+})
+
+app.delete('/diaryentries/:id', async (req, res, next) =>{
+    try{
+        let deletedEntry = await DiaryEntry.findByPk(req.params.id);
+        if(deletedEntry){
+            await deletedEntry.destroy();
+            console.log('deleted');
+            res.status(201).send(`entry deleted with id: ${req.params.id}`);
+        }else{
+            throw new Error('Cannot be deleted! This entry does not exist.')
+        }
+    }catch(err){
+        res.status(500).send(err.message);
+        next(err);
     }
 })
 
