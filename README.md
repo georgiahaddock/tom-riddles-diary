@@ -5,4 +5,5 @@ Where he may write his deepest, darkest secrets away from prying eyes - and hack
 
 Start app
     npm i
+    npm run seed
     npm run start

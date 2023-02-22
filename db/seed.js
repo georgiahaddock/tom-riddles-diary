@@ -1,5 +1,5 @@
 const { sequelize } = require('./db');
-const { DiaryEntry } = require('./');
+const { DiaryEntry } = require('../models/DiaryEntry');
 const entries = require('./seedData.json');
 
 const seed = async () => {
