@@ -17,3 +17,5 @@ seed()
   .finally(() => {
     sequelize.close();
   });
+
+  module.exports = seed;
