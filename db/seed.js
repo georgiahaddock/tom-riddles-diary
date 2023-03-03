@@ -1,6 +1,6 @@
 const { sequelize } = require('./db');
 const { DiaryEntry } = require('../models/DiaryEntry');
-const entries = require('./seedData.json');
+const entries = require('./seedData');
 
 const seed = async () => {
     await sequelize.sync( {force: true} ); //this clears the db before population

@@ -7,7 +7,7 @@ const { sequelize } = require('./db/db');
 const auth0 = require('./auth');
 const { requiresAuth } = require('express-openid-connect');
 
-app.use(express.json());
+// app.use(express.json());
 app.use(auth0); // auth router attaches /login, /logout, and /callback routes to the baseURL
 
 
@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
   res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out'); // req.isAuthenticated is provided from the auth router
 });
 
-app.get('/diaryentries', async(req, res, next) => {
+app.get('/diaryentries', requiresAuth(), async(req, res, next) => {
     try{
         const diaryEntries = await DiaryEntry.findAll();
 
@@ -35,7 +35,7 @@ app.get('/diaryentries', async(req, res, next) => {
     }
 });
 
-app.post('/diaryentries', async (req, res, next) => {
+app.post('/diaryentries', requiresAuth(), async (req, res, next) => {
     try{
         let { newEntry } = req.body;
         if(!newEntry.title || !newEntry.passage){
@@ -51,7 +51,7 @@ app.post('/diaryentries', async (req, res, next) => {
     }
 })
 
-app.delete('/diaryentries/:id', async (req, res, next) =>{
+app.delete('/diaryentries/:id', requiresAuth(), async (req, res, next) =>{
     try{
         let deletedEntry = await DiaryEntry.findByPk(req.params.id);
         if(deletedEntry){
@@ -67,7 +67,7 @@ app.delete('/diaryentries/:id', async (req, res, next) =>{
     }
 })
 
-app.put('/diaryentries/:id', async (req, res, next) =>{
+app.put('/diaryentries/:id', requiresAuth(), async (req, res, next) =>{
     console.log(req.body);
     try{
         const diaryEntry = await DiaryEntry.findByPk(req.params.id);
@@ -89,7 +89,9 @@ app.put('/diaryentries/:id', async (req, res, next) =>{
     }
 })
 
-app.listen(port, () => {
-    sequelize.sync({ force: false });
+app.listen(port, async () => {
+    await sequelize.sync({ force: false });
     console.log(`listening on port http://localhost:${port}/diaryentries`);
 })
+
+module.exports = app;

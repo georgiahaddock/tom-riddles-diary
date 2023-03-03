@@ -6,7 +6,7 @@ const config = {
   auth0Logout: true,
   secret: 'hello, potter.',
   baseURL: 'http://localhost:3000',
-  clientID: 'tkCxwh91d3dF5VFr7qQ08MMsYsMkJCKz',
+  clientID: 'D2eqi4zHhJZgm6lXe7HbDHrK5gaOhD10',
   issuerBaseURL: 'https://dev-r20xhvfyn8f1kdg3.uk.auth0.com'
 };
 

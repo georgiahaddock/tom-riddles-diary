@@ -4,7 +4,7 @@ const app = require('./server');
 const { sequelize } = require('./db/db');
 const DiaryEntry = require('./models/DiaryEntry')
 const seed = require('./db/seed');
-const {diaryEntries} = require('./db/seedData');
+const diaryEntries = require('./db/seedData');
 
 describe('Endpoints', () => {
     // to be used in POST test
@@ -19,13 +19,16 @@ describe('Endpoints', () => {
     describe('GET /diaryentries', () => {
         it('should return list of correct diary entries', async () => {
             // make a request
-            const response = await request(app).get('/diaryentries');
+            const response = await app.get('/diaryentries');
             // assert a response code
             expect(response.status).toBe(200);
             // expect a response
             expect(response.body).toBeDefined();
             // toEqual checks deep equality in objects
+            console.log(diaryEntries[0]);
+            console.log(response);
             expect(response.body[0]).toEqual(expect.objectContaining(diaryEntries[0]));
         });
     });
+    
 });
