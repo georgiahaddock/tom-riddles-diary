@@ -16,7 +16,15 @@ app.get('/profile', requiresAuth(), (req, res) => {
 
 app.get('/', (req, res) => {
     if (req.oidc.isAuthenticated()) {
-      res.send('Logged in');
+      res.send(`
+        <html>
+        <body>
+          <h1>Logged In</h1>
+          <button onclick="location.href='/diaryentries'">Go to diary entries</button>
+        </body>
+      </html>
+
+      `);
     } else {
       res.send(`
         <html>
@@ -29,21 +37,24 @@ app.get('/', (req, res) => {
     }
   });
 
-app.get('/diaryentries', requiresAuth(), async(req, res, next) => {
-    try{
-        const diaryEntries = await DiaryEntry.findAll();
+  app.get('/diaryentries', requiresAuth(), async(req, res, next) => {
+    try {
+      const diaryEntries = await DiaryEntry.findAll();
 
-        if(diaryEntries){
-            res.send(diaryEntries);
-            next();
-        }else{
-            res.send("Entries not found! There must be an error somewhere.")
-        }
-    }catch(err){
-        res.send(err);
-        next(err);
+      if (diaryEntries) {
+        const entriesHtml = diaryEntries.map(entry => {
+          return `<li>${JSON.stringify(entry)}</li>`;
+        }).join('');
+        const editButtonHtml = `<a href="/editdiaryentries">Edit Diary Entries</a>`;
+        res.send(`<ul>${entriesHtml}</ul><br>${editButtonHtml}`);
+      } else {
+        res.send("Entries not found! There must be an error somewhere.");
+      }
+    } catch(err) {
+      res.send(err);
+      next(err);
     }
-});
+  });
 
 app.post('/diaryentries', requiresAuth(), async (req, res, next) => {
     try{
