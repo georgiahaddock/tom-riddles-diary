@@ -8,7 +8,7 @@ const { sequelize } = require('./db/db');
 const auth0 = require('./auth');
 const { requiresAuth } = require('express-openid-connect');
 
-// app.use(express.json());
+app.use(express.json());
 app.use(auth0); // auth router attaches /login, /logout, and /callback routes to the baseURL
 
 const startServer = async () => {
@@ -16,8 +16,29 @@ const startServer = async () => {
 }
 startServer();
 
-app.get('/profile', requiresAuth(), (req, res) => {
-  res.send(JSON.stringify(req.oidc.user));
+app.get('/profile', requiresAuth(), (req, res, next) => {
+    try {
+        const profileInfo = req.oidc.user;
+
+        if (profileInfo) {
+            res.send(
+                `<div>
+                    <strong>${profileInfo.given_name} ${profileInfo.family_name}</strong><br>
+                    <em>${profileInfo.email}</em><br>
+                </div><br>
+                <button onclick="location.href='/logout'">Log out</button>
+                <button onclick="location.href='/diaryentries'">Go to diary</button>`
+            )
+        }
+        else {
+        res.send("Profile not found! There must be an error somewhere.");
+        }
+    } catch(err) {
+        res.send(err);
+        next(err);
+    }
+
+    // res.send(JSON.stringify(req.oidc.user));
 });
 
 app.get('/', (req, res) => {
@@ -27,6 +48,8 @@ app.get('/', (req, res) => {
                 <body>
                     <h1>Logged In</h1>
                     <button onclick="location.href='/diaryentries'">Go to diary entries</button>
+                    <button onclick="location.href='/logout'">Log Out</button>
+                    <button onclick="location.href='/profile'">See Profile</button>
                 </body>
             </html>
 
@@ -58,7 +81,7 @@ try {
         });
 
     const editButtonHtml = `<button onclick="location.href='/actions'">Actions</button>`;
-    res.send(`<ul>${entriesHtml}</ul><br>${editButtonHtml}`);
+    res.send(`<div>${entriesHtml}</div><br>${editButtonHtml}`);
     } else {
     res.send("Entries not found! There must be an error somewhere.");
     }
@@ -79,9 +102,25 @@ app.get('/actions', requiresAuth(), async (req, res, next) => {
         <body>
             <h1>Edit your diary...</h1>
 
-            <button onclick="location.href='/diaryentries'">View all entries</button>
+            <button onclick="location.href='/diaryentries'">Go to entries</button>
 
             <button onclick="location.href='/profile'">View profile information</button>
+
+            <button onclick="location.href='/logout'">Log out</button>
+
+            <form method="POST" action="/diaryentries/:id?_method=DELETE">
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="text" name="id" id="id">
+                <button type="submit">Delete Entry</button>
+            </form>
+
+            <form method="POST" action="/diaryentries">
+                <label for="title">Title:</label>
+                <input type="text" name="title" id="title">
+                <label for="passage">Passage:</label>
+                <textarea name="passage" id="passage"></textarea>
+                <button type="submit">Add Entry</button>
+            </form>
 
         </body>
     </html>
