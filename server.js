@@ -16,45 +16,66 @@ app.get('/profile', requiresAuth(), (req, res) => {
 
 app.get('/', (req, res) => {
     if (req.oidc.isAuthenticated()) {
-      res.send(`
-        <html>
-        <body>
-          <h1>Logged In</h1>
-          <button onclick="location.href='/diaryentries'">Go to diary entries</button>
-        </body>
-      </html>
+        res.send(`
+            <html>
+                <body>
+                    <h1>Logged In</h1>
+                    <button onclick="location.href='/diaryentries'">Go to diary entries</button>
+                </body>
+            </html>
 
-      `);
+    `);
     } else {
-      res.send(`
-        <html>
-          <body>
-            <h1>Logged out</h1>
-            <button onclick="location.href='/login'">Login</button>
-          </body>
-        </html>
-      `);
+        res.send(`
+                <html>
+                    <body>
+                        <h1>Logged out</h1>
+                        <button onclick="location.href='/login'">Login</button>
+                    </body>
+                </html>
+            `);
     }
-  });
+});
 
-  app.get('/diaryentries', requiresAuth(), async(req, res, next) => {
-    try {
-      const diaryEntries = await DiaryEntry.findAll();
+app.get('/diaryentries', requiresAuth(), async(req, res, next) => {
+try {
+    const diaryEntries = await DiaryEntry.findAll();
 
-      if (diaryEntries) {
-        const entriesHtml = diaryEntries.map(entry => {
-          return `<li>${JSON.stringify(entry)}</li>`;
-        }).join('');
-        const editButtonHtml = `<a href="/editdiaryentries">Edit Diary Entries</a>`;
-        res.send(`<ul>${entriesHtml}</ul><br>${editButtonHtml}`);
-      } else {
-        res.send("Entries not found! There must be an error somewhere.");
-      }
-    } catch(err) {
-      res.send(err);
-      next(err);
+    if (diaryEntries) {
+    const entriesHtml = diaryEntries.map(entry => {
+        return `<li>${JSON.stringify(entry)}</li>`;
+    }).join('');
+    const editButtonHtml = `<a href="/actions">Actions</a>`;
+    res.send(`<ul>${entriesHtml}</ul><br>${editButtonHtml}`);
+    } else {
+    res.send("Entries not found! There must be an error somewhere.");
     }
-  });
+} catch(err) {
+    res.send(err);
+    next(err);
+}
+});
+
+app.get('/actions', requiresAuth(), async (req, res, next) => {
+    res.send(`
+    <html>
+        <style>
+            button {
+                margin-bottom: 10px;
+            }
+        </style>
+        <body>
+            <h1>Edit your diary...</h1>
+
+            <button onclick="location.href='/diaryentries'">View all entries</button>
+
+            <button onclick="location.href='/profile'">View profile information</button>
+
+        </body>
+    </html>
+    `);
+
+})
 
 app.post('/diaryentries', requiresAuth(), async (req, res, next) => {
     try{
