@@ -48,9 +48,15 @@ try {
     const diaryEntries = await DiaryEntry.findAll();
 
     if (diaryEntries) {
-    const entriesHtml = diaryEntries.map(entry => {
-        return `<li>${JSON.stringify(entry)}</li><br>`;
-    }).join('');
+        const entriesHtml = diaryEntries.map(entry => {
+            return `<div>
+                        <strong>${entry.id}</strong><br>
+                        <strong>${entry.title}</strong><br>
+                        <em>${entry.passage}</em><br>
+                        <p>${entry.createdAt}</p>
+                    </div><br>`;
+        });
+
     const editButtonHtml = `<button onclick="location.href='/actions'">Actions</button>`;
     res.send(`<ul>${entriesHtml}</ul><br>${editButtonHtml}`);
     } else {
