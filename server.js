@@ -1,4 +1,5 @@
 const cors = require('cors');
+const seed = require('./db/seed');
 const express = require('express');
 const {DiaryEntry} = require('./models/DiaryEntry.js');
 const app = express();
@@ -9,6 +10,11 @@ const { requiresAuth } = require('express-openid-connect');
 
 // app.use(express.json());
 app.use(auth0); // auth router attaches /login, /logout, and /callback routes to the baseURL
+
+const startServer = async () => {
+    await seed();
+}
+startServer();
 
 app.get('/profile', requiresAuth(), (req, res) => {
   res.send(JSON.stringify(req.oidc.user));
@@ -43,9 +49,9 @@ try {
 
     if (diaryEntries) {
     const entriesHtml = diaryEntries.map(entry => {
-        return `<li>${JSON.stringify(entry)}</li>`;
+        return `<li>${JSON.stringify(entry)}</li><br>`;
     }).join('');
-    const editButtonHtml = `<a href="/actions">Actions</a>`;
+    const editButtonHtml = `<button onclick="location.href='/actions'">Actions</button>`;
     res.send(`<ul>${entriesHtml}</ul><br>${editButtonHtml}`);
     } else {
     res.send("Entries not found! There must be an error somewhere.");
