@@ -14,6 +14,10 @@ const data = [
     {
       title: "Chapter 4",
       passage: "I'm going to kill you, Harry Potter. I'm going to destroy you."
+    },
+    {
+      title: "Confession:",
+      passage: "Got the hots for Professor Trelawney"
     }
   ]
 
