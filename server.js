@@ -10,6 +10,7 @@ const { requiresAuth } = require('express-openid-connect');
 
 app.use(express.json());
 app.use(auth0); // auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(express.urlencoded({ extended: true }));
 
 const startServer = async () => {
     await seed();
@@ -102,17 +103,17 @@ app.get('/actions', requiresAuth(), async (req, res, next) => {
         <body>
             <h1>Edit your diary...</h1>
 
-            <button onclick="location.href='/diaryentries'">Go to entries</button>
+            <button onclick="location.href='/diaryentries'">Go to entries</button><br>
 
-            <button onclick="location.href='/profile'">View profile information</button>
+            <button onclick="location.href='/profile'">View profile information</button><br>
 
-            <button onclick="location.href='/logout'">Log out</button>
+            <button onclick="location.href='/logout'">Log out</button><br>
 
             <form method="POST" action="/diaryentries/:id?_method=DELETE">
                 <input type="hidden" name="_method" value="DELETE">
                 <input type="text" name="id" id="id">
                 <button type="submit">Delete Entry</button>
-            </form>
+            </form><br>
 
             <form method="POST" action="/diaryentries">
                 <label for="title">Title:</label>
@@ -125,24 +126,33 @@ app.get('/actions', requiresAuth(), async (req, res, next) => {
         </body>
     </html>
     `);
-
 })
 
 app.post('/diaryentries', requiresAuth(), async (req, res, next) => {
-    try{
-        let { newEntry } = req.body;
-        if(!newEntry.title || !newEntry.passage){
-            throw new Error('invalid request body');
-        }else{
-            newEntry = await DiaryEntry.create(newEntry);
-            console.log('passage created!')
-            res.send(newEntry);
+    try {
+        const { title, passage } = req.body;
+        console.log(req.body);
+        if (!title || !passage) {
+        throw new Error('invalid request body');
+        } else {
+        const newEntry = await DiaryEntry.create({ title, passage });
+        console.log('entry created!');
+        res.send(
+            `<div>
+                <strong>/New Entry created:</strong><br>
+                <p>${newEntry.title}</p><br>
+                <p>${newEntry.passage}</p><br>
+                <button onclick="location.href='/actions'">Go back</button><br>
+                <button onclick="location.href='/diaryentries'">Go to entries</button>
+            </div>`
+            );
         }
-    }catch(err){
+        } catch (err) {
         res.status(500).send(err.message);
-        next(err)
+        next(err);
     }
-})
+});
+
 
 app.delete('/diaryentries/:id', requiresAuth(), async (req, res, next) =>{
     try{
